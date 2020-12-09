@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+</head>
+<body>
+    <div id='app'>
+        <button v-on:click="newNumber">重新随机数字</button>
+        <button v-on:click="show = !show">看一眼</button>
+        <input v-model="newguess" placeholder="1234">
+        <button v-on:click="newGuess">猜一下</button>
+        <button v-on:click="guesses = []">重新猜啦</button>
+
+        <div v-if="show">
+            {{ num }}
+        </div>
+
+        <ol>
+            <li v-for="guess in guesses" :key="guess.value">
+                {{ guess.value }}, {{ guess.compare }}
+            </li>
+        </ol>
+    </div>
+
+    <script>
+        function randomN() {
+            return String(Math.floor(Math.random() * 10));
+        }
+
+        function randomNum() {
+            res = String();
+            while (res.length != 4) {
+                n = randomN();
+                if (res.indexOf(n) == -1) {
+                    res = res + n;
+                }
+            }
+            return res;
+        }
+
+        function compNum(guess, num) {
+            if (guess == num) {
+                return "Bingo!";
+            }
+            a = 0;
+            b = 0;
+            for (var i = 0; i < 4; ++i) {
+                a += (guess[i] == num[i]);
+                b += (num.indexOf(guess[i]) != -1);
+            }
+            return String(a) + "A" + String(b) + "B";
+        }
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                num: randomNum(),
+                guesses: [],
+                newguess: "",
+                show: false
+            },
+            methods: {
+                newNumber: function() {
+                    this.num = randomNum();
+                    this.guesses = [];
+                    this.newguess = "";
+                    this.show = false;
+                },
+                newGuess: function() {
+                    this.guesses.push({
+                        value: this.newguess,
+                        compare: compNum(this.newguess, this.num)
+                    });
+                    this.newguess = "";
+                }
+            }
+        })
+    </script>
+</body>
+</html>
